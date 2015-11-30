@@ -55,17 +55,16 @@ int main(int argc, char* argv[]) {
   DirectedGraph->AddEdge(7, 2);
   DirectedGraph->AddEdge(8, 9);
 
-  TIntFltH nodeBtwH;
-  TIntPrFltH edgeBtwH;
+  // TIntFltH nodeBtwH;
+  // TIntPrFltH edgeBtwH;
 
-
-  printf("Testing Betweenness Centrality Calculation \n");
-  TSnap::GetBetweennessCentr<PNGraph> (DirectedGraph, nodeBtwH, edgeBtwH, true);
-  for (TIntFltH::TIter It = nodeBtwH.BegI(); It < nodeBtwH.EndI(); It++) {
-    int node_id = It.GetKey();
-    double centr = It.GetDat();
-    printf("NodeId: %d, Centr: %f \n", node_id, centr);
-  }
+  // printf("Testing Betweenness Centrality Calculation \n");
+  // TSnap::GetBetweennessCentr<PNGraph> (DirectedGraph, nodeBtwH, edgeBtwH, true);
+  // for (TIntFltH::TIter It = nodeBtwH.BegI(); It < nodeBtwH.EndI(); It++) {
+  //   int node_id = It.GetKey();
+  //   double centr = It.GetDat();
+  //   printf("NodeId: %d, Centr: %f \n", node_id, centr);
+  // }
 
   // printf("Testing Closeness Centrality Calculation \n");
   // for (TNGraph::TNodeI NI = DirectedGraph->BegNI(); NI < DirectedGraph->EndNI(); NI++) {
@@ -73,6 +72,51 @@ int main(int argc, char* argv[]) {
   //   double centr = TSnap::GetClosenessCentr<PNGraph>(DirectedGraph, id, true);
   //   printf("NodeId: %d, Centr: %f \n", id, centr);
   // }
+
+  const PNEANet graph = TNEANet::New();
+  for (int i = 0; i < 10; i++) {
+    graph->AddNode(i);
+  }
+
+  graph->AddEdge(0, 2);
+  graph->AddEdge(1, 7);
+  graph->AddEdge(2, 6);
+  graph->AddEdge(3, 5);
+  graph->AddEdge(4, 3);
+  graph->AddEdge(5, 6);
+  graph->AddEdge(7, 0);
+  graph->AddEdge(8, 2);
+  graph->AddEdge(9, 5);
+
+  TIntFltH pathLength;
+  TFltV attr, attr1;
+  attr.Add(0.5);
+  attr.Add(1.0);
+  attr.Add(0.5);
+  attr.Add(1.0);
+  attr.Add(0.5);
+  attr.Add(1.0);
+  attr.Add(0.5);
+  attr.Add(1.0);
+  attr.Add(0.5);
+  
+  printf("Testing Closeness Centrality Calculation \n");
+  for (TNEANet::TNodeI NI = graph->BegNI(); NI < graph->EndNI(); NI++) {
+    int id = NI.GetId();
+    double centr = TSnap::GetWeightedClosenessCentr(graph, id, true, attr);
+    printf("NodeId: %d, Centr: %f \n", id, centr);
+  }
+
+  TIntFltH nodeBtwH;
+  TIntPrFltH edgeBtwH;
+
+  printf("Testing Betweenness Centrality Calculation \n");
+  TSnap::GetWeightedBetweennessCentr (graph, nodeBtwH, edgeBtwH, attr, true);
+  for (TIntFltH::TIter It = nodeBtwH.BegI(); It < nodeBtwH.EndI(); It++) {
+    int node_id = It.GetKey();
+    double centr = It.GetDat();
+    printf("NodeId: %d, Centr: %f \n", node_id, centr);
+  }
 
   return 0;
 }
