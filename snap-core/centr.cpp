@@ -906,4 +906,26 @@ void GetWeightedBetweennessCentr(const PNEANet Graph, TIntFltH& NodeBtwH, TIntPr
     );
 }
 
+void GetWeightedBetweennessCentr(const PNEANet Graph, TIntFltH& NodeBtwH, const TFltV& Attr, const bool& isDir, const double& NodeFrac) {
+  TIntPrFltH EdgeBtwH;
+  TIntV NIdV;  Graph->GetNIdV(NIdV);
+  if (NodeFrac < 1.0) { // calculate beetweenness centrality for a subset of nodes
+    NIdV.Shuffle(TInt::Rnd);
+    for (int i = int((1.0-NodeFrac)*NIdV.Len()); i > 0; i--) {
+      NIdV.DelLast(); }
+  }
+  GetWeightedBetweennessCentr(Graph, NIdV, NodeBtwH, isDir, true, EdgeBtwH, false, Attr);
+}
+
+void GetWeightedBetweennessCentr(const PNEANet Graph, TIntPrFltH& EdgeBtwH, const TFltV& Attr, const bool& isDir, const double& NodeFrac) {
+  TIntFltH NodeBtwH;
+  TIntV NIdV;  Graph->GetNIdV(NIdV);
+  if (NodeFrac < 1.0) { // calculate beetweenness centrality for a subset of nodes
+    NIdV.Shuffle(TInt::Rnd);
+    for (int i = int((1.0-NodeFrac)*NIdV.Len()); i > 0; i--) {
+      NIdV.DelLast(); }
+  }
+  GetWeightedBetweennessCentr(Graph, NIdV, NodeBtwH, isDir, false, EdgeBtwH, true, Attr);
+}
+
 }; // namespace TSnap
