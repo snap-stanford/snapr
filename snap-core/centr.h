@@ -37,12 +37,16 @@ TIntH LoadNodeList(TStr InFNmNodes);
 /// Returns Farness centrality of a given node NId.
 /// Farness centrality of a node is the average shortest path length to all other nodes that reside is the same connected component as the given node.
 template <class PGraph> double GetFarnessCentr(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized = true);
+
+template <class PGraph> double GetFarnessCentrMP(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized = true);
+
 /// Weighted Farness Centrality
 double GetWeightedFarnessCentr(const PNEANet Graph, const int& NId, const bool& IsDir, const TFltV& Attr, const bool& Normalized = true);
 
 /// Returns Closeness centrality of a given node NId.
 /// Closeness centrality of a node is defined as 1/FarnessCentrality.
 template <class PGraph> double GetClosenessCentr(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized = true);
+template <class PGraph> double GetClosenessCentrMP(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized = true);
 /// Weighted Closeness Centrality
 double GetWeightedClosenessCentr(const PNEANet Graph, const int& NId, const bool& IsDir, const TFltV& Attr, const bool& Normalized = true);
 /// Returns node Eccentricity, the largest shortest-path distance from the node NId to any other node in the Graph.
@@ -127,8 +131,35 @@ double GetFarnessCentr(const PGraph& Graph, const int& NId, const bool& IsDir, c
 }
 
 template <class PGraph>
+double GetFarnessCentrMP(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized) {
+  TIntH NDistH(Graph->GetNodes());
+  TSnap::GetShortPath<PGraph>(Graph, NId, NDistH, IsDir, TInt::Mx);  
+  
+  double sum = 0;
+  for (TIntH::TIter I = NDistH.BegI(); I < NDistH.EndI(); I++) {
+    sum += I->Dat();
+  }
+  if (NDistH.Len() > 1) { 
+    double centr = sum/double(NDistH.Len()-1); 
+    if (Normalized) {
+      centr *= (Graph->GetNodes() - 1)/double(NDistH.Len()-1);
+    }
+    return centr;
+  }
+  else { return 0.0; }
+}
+
+template <class PGraph>
 double GetClosenessCentr(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized) {
   const double Farness = GetFarnessCentr<PGraph> (Graph, NId, IsDir, Normalized);
+  if (Farness != 0.0) { return 1.0/Farness; }
+  else { return 0.0; }
+  return 0.0;
+}
+
+template <class PGraph>
+double GetClosenessCentrMP(const PGraph& Graph, const int& NId, const bool& IsDir, const bool& Normalized) {
+  const double Farness = GetFarnessCentrMP<PGraph> (Graph, NId, IsDir, Normalized);
   if (Farness != 0.0) { return 1.0/Farness; }
   else { return 0.0; }
   return 0.0;

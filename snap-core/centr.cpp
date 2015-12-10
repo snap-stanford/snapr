@@ -875,6 +875,7 @@ void GetWeightedBetweennessCentr(const PNEANet Graph, const TIntV& BtwNIdV, TInt
         }
       }
     }
+    
     while (! S.Empty()) {
       const int w = S.Top();
       const double SigmaW = sigma.GetDat(w);

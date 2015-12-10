@@ -1,6 +1,7 @@
 // Small example testing basic functionality of SNAP
 
 #include "Snap.h"
+#include <time.h>
 
 int main(int argc, char* argv[]) {
   // create a graph and save it
@@ -66,13 +67,6 @@ int main(int argc, char* argv[]) {
   //   printf("NodeId: %d, Centr: %f \n", node_id, centr);
   // }
 
-  // printf("Testing Closeness Centrality Calculation \n");
-  // for (TNGraph::TNodeI NI = DirectedGraph->BegNI(); NI < DirectedGraph->EndNI(); NI++) {
-  //   int id = NI.GetId();
-  //   double centr = TSnap::GetClosenessCentr<PNGraph>(DirectedGraph, id, true);
-  //   printf("NodeId: %d, Centr: %f \n", id, centr);
-  // }
-
   const PNEANet graph = TNEANet::New();
   for (int i = 0; i < 10; i++) {
     graph->AddNode(i);
@@ -117,6 +111,44 @@ int main(int argc, char* argv[]) {
     double centr = It.GetDat();
     printf("NodeId: %d, Centr: %f \n", node_id, centr);
   }
+
+  PNGraph G= TSnap::LoadEdgeList<PNGraph>("../../cs399/soc-LiveJournal1.txt", 0, 1);
+
+  // clock_t t1,t2;
+  // t1=clock();
+  // printf("Testing Performance of Closeness Centrality Calculation \n");
+  // for (TNGraph::TNodeI NI = G->BegNI(); NI < G->EndNI(); NI++) {
+  //   int id = NI.GetId();
+  //   double centr = TSnap::GetClosenessCentr<PNGraph>(G, id, true);
+  //   printf("NodeId: %d, Centr: %f \n", id, centr);
+  //   if (id == 10) {
+  //     break;
+  //   }
+  // }
+  // t2=clock();
+  // float diff ((float)t2-(float)t1);
+  // printf("%lf \n", diff);
+  // t1 = clock();
+  // for (TNGraph::TNodeI NI = G->BegNI(); NI < G->EndNI(); NI++) {
+  //   int id = NI.GetId();
+  //   double centr = TSnap::GetClosenessCentrMP<PNGraph>(G, id, true);
+  //   printf("NodeId: %d, Centr: %f \n", id, centr);
+  //   if (id == 10) {
+  //     break;
+  //   }
+  // }
+  // t2=clock();
+  // diff = (float)t2-(float)t1;
+  // printf("%lf \n", diff);
+
+  printf("Testing Betweenness Centrality Calculation \n");
+  TSnap::GetWeightedBetweennessCentr (graph, nodeBtwH, edgeBtwH, attr, true);
+  for (TIntFltH::TIter It = nodeBtwH.BegI(); It < nodeBtwH.EndI(); It++) {
+    int node_id = It.GetKey();
+    double centr = It.GetDat();
+    printf("NodeId: %d, Centr: %f \n", node_id, centr);
+  }
+
 
   return 0;
 }
