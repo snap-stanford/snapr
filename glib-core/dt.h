@@ -1256,6 +1256,10 @@ public:
   TUInt& operator=(const uint& _Val){Val=_Val; return *this;}
   TUInt operator++(int){Val++; return *this;}
   TUInt operator--(int){Val--; return *this;}
+  TUInt& operator+=(const uint& UInt){Val+=UInt; return *this;}
+  TUInt& operator-=(const uint& UInt){Val-=UInt; return *this;}
+  TUInt& operator+=(const TUInt& UInt){Val+=UInt.Val; return *this;}
+  TUInt& operator-=(const TUInt& UInt){Val-=UInt.Val; return *this;}
   //bool operator==(const TUInt& UInt) const {return Val==UInt.Val;}
   //bool operator==(const uint& UInt) const {return Val==UInt;}
   //bool operator!=(const uint& UInt) const {return Val!=UInt;}
